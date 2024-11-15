@@ -9,7 +9,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      title: '橙子补光',
+      title: '橙子有光',
       rateLimit: {
         max: 10, // maximum requests per duration time
         duration: 60, // duration time in seconds, 1 minute
@@ -70,4 +70,6 @@ export default defineNuxtConfig({
   imports: {
     dirs: [],
   },
+
+  compatibilityDate: '2024-11-15',
 })

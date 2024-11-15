@@ -49,14 +49,14 @@
       {{ errorInfo[activeTab] }}
     </div>
 
-    <template v-if="resultColor">
+    <template v-if="result.color">
       <div class="mx-auto h-1px w-20 border-t border-base" />
       <div class="flex flex-col gap-2 rounded-md p3 bg-ink">
         <span class="op50">生成结果：</span>
         <div
           ref="imgRef"
           class="relative h-30 w-full rounded-md"
-          :style="{ backgroundColor: resultColor }"
+          :style="{ backgroundColor: result.color }"
         >
           <button
             :title="isFullscreen ? '退出全屏' : '进入全屏'"
@@ -69,16 +69,16 @@
             :class="{ '!hidden': isFullscreen }"
           >
             <span class="text-sm font-mono">
-              {{ resultColor }}
+              {{ result.color }}
             </span>
-            <button class="icon-button-sm" @click="copy(resultColor)">
+            <button class="icon-button-sm" @click="copy(result.color)">
               <div i-carbon-copy title="复制" />
             </button>
           </div>
         </div>
 
-        <div v-if="resultReason && activeTab === 'text'" class="rounded px3 py2 text-sm" :style="resultStyle">
-          {{ resultReason }}
+        <div v-if="result.reason && activeTab === 'text'" class="rounded px3 py2 text-sm" :style="resultStyle">
+          {{ result.reason }}
         </div>
 
         <button
@@ -97,7 +97,17 @@
 <script setup lang="ts">
 // @ts-expect-error no types
 import ColorThief from 'colorthief'
-import { errorInfo, isDark, isMobile, loading, resultColor, resultReason, state } from '~/logic/state'
+import {
+  errorInfo,
+  getResultFromCache,
+  isDark,
+  isMobile,
+  loading,
+  resetResult,
+  result,
+  setResultToCache,
+  state,
+} from '~/logic/state'
 import { colorRgbToHex, generateColorShades } from '~/logic/utils'
 import type { Tab } from '~/logic/urlQuery'
 import { useUrlQuery } from '~/logic/urlQuery'
@@ -117,27 +127,39 @@ const { copy } = useClipboard({
 
 // 基于文字生成颜色值
 async function generateByText() {
-  if (!state.value.text?.trim()) {
+  const text = state.value.text?.trim()
+  if (!text) {
     errorInfo.text = '请输入文字'
     return
   }
 
+  loading.value = true
+
+  const cachedResult = getResultFromCache(text)
+  if (cachedResult) {
+    await new Promise(resolve => setTimeout(resolve, 500))
+    loading.value = false
+    result.value = Object.assign({}, cachedResult)
+    return
+  }
+
   try {
-    loading.value = true
     const res = await $fetch('/api/analyze-text', {
       method: 'POST',
       body: {
-        text: state.value.text.trim(),
+        text,
       },
     })
-    resultColor.value = res.color || ''
-    resultReason.value = res.reason || ''
+    result.value = {
+      color: res.color || '',
+      reason: res.reason || '',
+    }
+    setResultToCache(text, result.value)
     errorInfo.text = ''
   }
   catch (error: any) {
     console.log('error', error.data)
-    resultColor.value = ''
-    resultReason.value = ''
+    resetResult()
     errorInfo.text = error.data.message
   }
   finally {
@@ -165,12 +187,14 @@ async function generateByImage() {
         resolve(colorRgbToHex(rgb))
       }
     })
-    resultColor.value = colorVal
+    result.value = {
+      color: colorVal,
+      reason: '',
+    }
   }
   catch (error: any) {
     errorInfo.image = '无法从图片中提取颜色'
-    resultColor.value = ''
-    resultReason.value = ''
+    resetResult()
   }
   finally {
     loading.value = false
@@ -178,7 +202,7 @@ async function generateByImage() {
 }
 
 const resultStyle = computed(() => {
-  const resultShades = generateColorShades(resultColor.value!)
+  const resultShades = generateColorShades(result.value.color!)
   if (!resultShades.length)
     return {}
 
@@ -208,12 +232,12 @@ function downloadImage() {
     canvas.width = window.screen.width
     canvas.height = window.screen.height
   }
-  ctx!.fillStyle = resultColor.value
+  ctx!.fillStyle = result.value.color
   ctx!.fillRect(0, 0, canvas.width, canvas.height)
 
   const a = document.createElement('a')
   a.href = canvas.toDataURL('image/png')
-  a.download = `${useRuntimeConfig().public.title}-${resultColor.value}.png`
+  a.download = `${useRuntimeConfig().public.title}-${result.value.color}.png`
   a.click()
 }
 </script>

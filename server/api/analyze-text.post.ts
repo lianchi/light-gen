@@ -22,30 +22,18 @@ const openai = new OpenAI({
 
 const CLIENT_ERROR_FLAG = '__CLIENT_ERROR__'
 
-const cache = new Map<string, { data: ResponseBody; timestamp: number }>()
-const CACHE_TTL = 10 * 60 * 1000 // 10分钟缓存
-
 async function fetchAiResponse(userText: string) {
-  const cacheKey = userText.trim()
-  const cachedData = cache.get(cacheKey)
-  if (cachedData && Date.now() - cachedData.timestamp < CACHE_TTL)
-    return cachedData.data
-
   const completion = await openai.chat.completions.create({
     messages: [
       { role: 'system', content: PROMPT_TEXT_EN },
       { role: 'user', content: userText },
     ],
     model: config.AI.modelName,
+    temperature: 1.5,
     response_format: { type: 'json_object' },
   })
 
   const content = JSON.parse(completion.choices[0].message.content || '{}')
-
-  cache.set(cacheKey, {
-    data: content,
-    timestamp: Date.now(),
-  })
 
   return content
 }
@@ -60,7 +48,6 @@ export default defineEventHandler(async (event: H3Event) => {
       throw createError({ statusMessage: CLIENT_ERROR_FLAG, message: '文本不能为空' })
 
     const res: ResponseBody = await fetchAiResponse(body.text)
-
     const log = {
       ip: getRequestIP(event, { xForwardedFor: true }) || 'unKnownIP',
       platform: req.headers['sec-ch-ua-platform'],
