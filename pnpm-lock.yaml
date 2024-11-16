@@ -47,6 +47,9 @@ importers:
       nuxt-api-shield:
         specifier: ^0.8.0
         version: 0.8.0(magicast@0.3.5)(rollup@4.26.0)(webpack-sources@3.2.3)
+      nuxt-gtag:
+        specifier: ^3.0.1
+        version: 3.0.1(magicast@0.3.5)(rollup@4.26.0)(webpack-sources@3.2.3)
       openai:
         specifier: ^4.72.0
         version: 4.72.0(encoding@0.1.13)
@@ -3812,6 +3815,9 @@ packages:
 
   nuxt-api-shield@0.8.0:
     resolution: {integrity: sha512-WTiWkGB1WaXU4X/RV9hdXbM3aGIdRY7i1o2Yz3UCh2nVMqXt0JURYVRod4F5Rgh8WIEa7Ea00dy5ISIpkN3a4g==}
+
+  nuxt-gtag@3.0.1:
+    resolution: {integrity: sha512-dfDeL8JwvwdCddlSBXqofEVdoONVZ5yqztqoiUs+4fEL+QfAAHtK+3MaLyEVO4keZuiyVQs6XPUJyR7afTVXNg==}
 
   nuxt@3.14.159:
     resolution: {integrity: sha512-1xz6AfFkun+byUIkBNX3/CTOTShPRFJe0y9HqWZX2aV9xdoz5ByeaHZfktokhOOSbvabjDyzkTbbHh3V673qHw==}
@@ -9632,6 +9638,18 @@ snapshots:
     dependencies:
       '@nuxt/kit': 3.14.159(magicast@0.3.5)(rollup@4.26.0)(webpack-sources@3.2.3)
       defu: 6.1.4
+    transitivePeerDependencies:
+      - magicast
+      - rollup
+      - supports-color
+      - webpack-sources
+
+  nuxt-gtag@3.0.1(magicast@0.3.5)(rollup@4.26.0)(webpack-sources@3.2.3):
+    dependencies:
+      '@nuxt/kit': 3.14.159(magicast@0.3.5)(rollup@4.26.0)(webpack-sources@3.2.3)
+      defu: 6.1.4
+      pathe: 1.1.2
+      ufo: 1.5.4
     transitivePeerDependencies:
       - magicast
       - rollup

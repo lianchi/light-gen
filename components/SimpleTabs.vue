@@ -41,14 +41,12 @@ interface Option {
   icon?: string
 }
 
-withDefaults(
-  defineProps<{
-    blocked?: boolean
-    disabled?: boolean
-    divide?: boolean
-    options: Option[]
-  }>(),
-  {},
-)
+defineProps<{
+  blocked?: boolean
+  disabled?: boolean
+  divide?: boolean
+  options: Option[]
+}>()
+
 const input = defineModel('modelValue')
 </script>

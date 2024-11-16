@@ -4,9 +4,9 @@ interface Result {
   reason: string
 }
 
-export const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
-export const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
-export const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+export const isSafari = computed(() => /^((?!chrome|android).)*safari/i.test(navigator.userAgent))
+export const isIOS = computed(() => /iPad|iPhone|iPod/.test(navigator.userAgent))
+export const isMobile = computed(() => /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
 
 export const isDark = useDark()
 export const toggleDark = useToggle(isDark)
@@ -23,6 +23,7 @@ export const result = ref<Result>({
   reason: '',
 })
 
+// cache for text generator - Start
 const cache = new Map<string, { data: Result; timestamp: number }>()
 const CACHE_TTL = 10 * 60 * 1000 // 10 分钟缓存
 export function getResultFromCache(text: string) {
@@ -43,6 +44,7 @@ export function setResultToCache(text: string, result: Result) {
     timestamp: Date.now(),
   })
 }
+// cache for text generator - End
 
 export function resetResult() {
   result.value = {
@@ -64,9 +66,12 @@ watch(() => state.value.text, (newVal, oldVal) => {
     errorInfo.text = ''
 })
 
+export const imageColorList = ref<string[]>([])
 watch(() => state.value.image, (newVal, oldVal) => {
-  if (newVal?.trim() && !oldVal?.trim())
+  if (newVal && !oldVal)
     errorInfo.image = ''
+  if (!newVal && oldVal)
+    imageColorList.value = []
 })
 
 watch(() => state.value.color, (val) => {

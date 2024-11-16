@@ -15,3 +15,8 @@ html.dark,
   color: white !important;
   color-scheme: dark;
 }
+
+input::placeholder,
+textarea::placeholder {
+  @apply color-fade;
+}

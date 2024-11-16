@@ -3,7 +3,13 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@unocss/nuxt',
     '@nuxtjs/color-mode',
+    'nuxt-gtag',
   ],
+
+  gtag: {
+    enabled: process.env.NODE_ENV === 'production',
+    id: 'G-W98LL03BZC',
+  },
 
   runtimeConfig: {
     public: {

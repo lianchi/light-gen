@@ -7,7 +7,7 @@
           v-model="state.text"
           rows="3"
           maxlength="100"
-          placeholder="你的补光要求，或者是你的心情😄"
+          placeholder="你身处的场景，或者是你的心情 😄"
           outline="focus:none"
           class="border rounded-md px4 py2 border-base focus-within:border-primary bg-ink"
         />
@@ -33,8 +33,21 @@
           @click="generateByImage"
         >
           <div :class="!loading ? 'i-ph:image-duotone' : 'i-ph:spinner-gap-bold animate-spin'" />
-          基于图片生成补光色
+          从图片中提取补光色
         </button>
+        <div v-if="state.image && imageColorList.length" class="my-2 flex-center flex-wrap gap-4">
+          <button
+            v-for="color of imageColorList"
+            :key="color"
+            class="relative h-8 w-8 rounded-md"
+            :style="{ backgroundColor: color }"
+            @click="state.color = color"
+          >
+            <div v-if="result.color === color" class="absolute bottom--2.5 w-full flex-center">
+              <div class="h-1.5 w-1.5 rounded-full bg-primary" />
+            </div>
+          </button>
+        </div>
       </template>
 
       <div v-if="activeTab === 'color'" class="flex items-center justify-between border rounded-md p4 border-base bg-ink">
@@ -53,21 +66,14 @@
       <div class="mx-auto h-1px w-20 border-t border-base" />
       <div class="flex flex-col gap-2 rounded-md p3 bg-ink">
         <span class="op50">生成结果：</span>
-        <div
-          ref="imgRef"
-          class="relative h-30 w-full rounded-md"
-          :style="{ backgroundColor: result.color }"
-        >
+        <div ref="imgRef" class="relative h-30 w-full rounded-md" :style="{ backgroundColor: result.color }">
           <button
             :title="isFullscreen ? '退出全屏' : '进入全屏'"
             :class="isFullscreen ? 'i-ph:corners-in-bold' : 'i-ph:corners-out-bold'"
             class="absolute right-3 top-3 icon-button"
             @click="toggle"
           />
-          <div
-            class="absolute bottom-3 right-3 flex items-center gap-2"
-            :class="{ '!hidden': isFullscreen }"
-          >
+          <div class="absolute bottom-3 right-3 flex items-center gap-2" :class="{ '!hidden': isFullscreen }">
             <span class="text-sm font-mono">
               {{ result.color }}
             </span>
@@ -100,6 +106,7 @@ import ColorThief from 'colorthief'
 import {
   errorInfo,
   getResultFromCache,
+  imageColorList,
   isDark,
   isMobile,
   loading,
@@ -181,14 +188,15 @@ async function generateByImage() {
 
   loading.value = true
   try {
-    const colorVal = await new Promise<string>((resolve) => {
+    imageColorList.value = await new Promise<string[]>((resolve) => {
       img.onload = () => {
-        const rgb = colorThief.getColor(img)
-        resolve(colorRgbToHex(rgb))
+        const rgbList = colorThief.getPalette(img, 7)
+        resolve(rgbList.map(colorRgbToHex))
       }
     })
+    state.value.color = imageColorList.value[0]
     result.value = {
-      color: colorVal,
+      color: imageColorList.value[0],
       reason: '',
     }
   }
@@ -224,7 +232,7 @@ const resultStyle = computed(() => {
 function downloadImage() {
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
-  if (isMobile) {
+  if (isMobile.value) {
     canvas.width = window.screen.width * window.devicePixelRatio
     canvas.height = window.screen.height * window.devicePixelRatio
   }

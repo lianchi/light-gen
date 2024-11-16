@@ -24,7 +24,7 @@ export default defineConfig({
       'icon-button-sm': 'icon-button p0.5 text-sm',
       'color-base': 'text-gray-900 dark:text-gray-300',
       'color-gray': 'text-gray-900:70 dark:text-gray-300:70',
-      'color-fade': 'text-gray-900:50 dark:text-gray-300:50',
+      'color-fade': 'text-gray-500:50 dark:text-gray-400:50',
       'a-primary': 'text-primary hover:text-primary/80 cursor-pointer',
       'a-error': 'hover:text-red-400/80 cursor-pointer',
       'glass-effect': 'backdrop-blur-6 bg-white/80 dark:bg-[#151515]/60',
