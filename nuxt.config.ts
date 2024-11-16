@@ -1,5 +1,3 @@
-import legacy from '@vitejs/plugin-legacy'
-
 export default defineNuxtConfig({
   modules: [
     '@vueuse/nuxt',
@@ -59,9 +57,6 @@ export default defineNuxtConfig({
         defineModel: true,
       },
     },
-    plugins: [
-      legacy(),
-    ],
     server: {
       cors: true,
     },

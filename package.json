@@ -20,7 +20,6 @@
     "@nuxtjs/color-mode": "^3.5.2",
     "@unocss/eslint-config": "^0.61.9",
     "@unocss/nuxt": "^0.61.9",
-    "@vitejs/plugin-legacy": "^5.4.3",
     "@vueuse/nuxt": "^10.11.1",
     "chroma-js": "^3.1.2",
     "colorthief": "^2.6.0",
