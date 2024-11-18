@@ -78,7 +78,7 @@
               {{ result.color }}
             </span>
             <button class="icon-button-sm" @click="copy(result.color)">
-              <div i-carbon-copy title="复制" />
+              <div :class="copied ? 'i-carbon:checkmark color-green-600' : 'i-carbon:copy'" title="复制" />
             </button>
           </div>
         </div>
@@ -93,7 +93,7 @@
           @click="downloadImage"
         >
           <div i-ph:download-simple />
-          保存为纯色图片
+          保存为纯色壁纸
         </button>
       </div>
     </template>
@@ -128,7 +128,7 @@ const { activeTab } = useUrlQuery(tabs)
 
 const imgRef = ref<HTMLDivElement>()
 const { isFullscreen, toggle } = useFullscreen(imgRef)
-const { copy } = useClipboard({
+const { copy, copied } = useClipboard({
   legacy: true,
 })
 

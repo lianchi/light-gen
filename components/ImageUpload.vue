@@ -9,7 +9,7 @@
       class="absolute inset-0 aspect-ratio-1 w-full rounded object-contain op100"
     >
     <template v-else>
-      <div class="text-lg op50" i-ph:plus />
+      <div class="text-lg op50 i-ph:plus" />
       <div class="mb-6 op50">
         选择图片
       </div>
