@@ -20,8 +20,6 @@ const openai = new OpenAI({
   timeout: 20000,
 })
 
-const CLIENT_ERROR_FLAG = '__CLIENT_ERROR__'
-
 async function fetchAiResponse(userText: string) {
   const completion = await openai.chat.completions.create({
     messages: [
@@ -38,14 +36,39 @@ async function fetchAiResponse(userText: string) {
   return content
 }
 
+// 验证请求来源
+function validateOrigin(event: H3Event) {
+  const origin = getHeader(event, 'origin')
+  const referer = getHeader(event, 'referer')
+
+  const allowedOrigin = config.public.allowedOrigin as string[]
+
+  if (origin && allowedOrigin.some(url => origin.includes(url)))
+    return
+
+  if (referer && allowedOrigin.some(url => referer.includes(url)))
+    return
+
+  throw createError({
+    statusCode: 403,
+    message: '未授权的访问来源',
+  })
+}
+
 export default defineEventHandler(async (event: H3Event) => {
   try {
+    validateOrigin(event)
+
     // 获取请求体
     const body = await readBody<RequestBody>(event)
     const req = event.node.req
 
-    if (!body.text)
-      throw createError({ statusMessage: CLIENT_ERROR_FLAG, message: '文本不能为空' })
+    if (!body.text) {
+      throw createError({
+        statusCode: 400,
+        message: '文本不能为空',
+      })
+    }
 
     const res: ResponseBody = await fetchAiResponse(body.text)
     const log = {
@@ -60,9 +83,9 @@ export default defineEventHandler(async (event: H3Event) => {
     return res
   }
   catch (error: any) {
-    if (error?.statusMessage === CLIENT_ERROR_FLAG)
-      throw createError({ statusCode: 400, message: error.message })
-    else
-      throw createError({ statusCode: 500, message: `分析文本时发生错误-${error.message}` })
+    throw createError({
+      statusCode: error.statusCode || 500,
+      message: error.message || '分析文本时发生错误',
+    })
   }
 })

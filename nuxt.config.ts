@@ -14,6 +14,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       title: '橙子有光',
+      allowedOrigin: ['light.juann.fun', 'localhost:3000'],
       rateLimit: {
         max: 10, // maximum requests per duration time
         duration: 60, // duration time in seconds, 1 minute
@@ -41,7 +42,7 @@ export default defineNuxtConfig({
       tasks: true,
     },
     scheduledTasks: {
-      '*/15 * * * *': ['cleanBans'], // clean the rate limit storage every 15 minutes
+      '*/15 * * * *': ['clean-bans'], // clean the rate limit storage every 15 minutes
     },
     storage: {
       'rate-limit': {

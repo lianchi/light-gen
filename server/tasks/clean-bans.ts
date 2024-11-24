@@ -1,4 +1,4 @@
-import { isBanExpired } from '../middleware/rateLimit'
+import { isBanExpired } from '../middleware/rate-limit'
 
 export default defineTask({
   meta: {
