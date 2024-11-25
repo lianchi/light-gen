@@ -14,6 +14,10 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       title: '橙子有光',
+      author: 'Ju',
+      description: 'A Simple screen light generator',
+      image: '/favicon.svg',
+      siteUrl: 'https://light.juann.fun',
       rateLimit: {
         max: 10, // maximum requests per duration time
         duration: 60, // duration time in seconds, 1 minute

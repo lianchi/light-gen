@@ -22,6 +22,16 @@ useHead({
 
 useSeoMeta({
   title: config.public.title,
+  ogTitle: config.public.title,
+  description: config.public.description,
+  ogDescription: config.public.description,
+  author: config.public.author,
+  ogImage: config.public.image,
+  ogUrl: config.public.siteUrl,
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterTitle: config.public.title,
+  twitterDescription: config.public.description,
 })
 </script>
 
