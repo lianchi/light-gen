@@ -13,7 +13,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      title: '橙子有光',
+      title: '橙子有光 | screen light generator',
       author: 'Ju',
       description: 'A Simple screen light generator',
       image: '/favicon.svg',
